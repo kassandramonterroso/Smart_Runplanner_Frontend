@@ -26,17 +26,20 @@ function DailyCheckIn() {
       });
   
       if (!response.ok) {
-        throw new Error("Failed to fetch suggestion");
+        throw new Error("Backend Error");
       }
   
       const data = await response.json();
       setSuggestion(data);
+
     } catch (err) {
-      setError(err.message);
+      setError("Backend not running. Please start the server.");
+      setSuggestion(null);
+
     } finally {
       setLoading(false);
     }
-  }
+  };
   
   
   return (
@@ -83,8 +86,24 @@ function DailyCheckIn() {
 
     {suggestion && (
         <div style={{ marginTop: "20px" }}>
-            <h3>Suggested Run</h3>
-            <pre>{JSON.stringify(suggestion, null, 2)}</pre>
+            <h3>Today's Run</h3>
+            
+            {suggestion.primary && (
+              <div>
+                <h4>Primary Recommendation</h4>
+                <p><strong>Type:</strong>{suggestion.primary.runType}</p>
+                <p>{suggestion.primary.reason}</p>
+              </div>
+            )}
+
+           {suggestion.alternative && (
+             <div style={{marginTop: "10px"}}>
+               <h4>Alternative Run</h4>
+               <p><strong>Type:</strong>{suggestion.alternative.runType}</p>
+               <p>{suggestion.alternative.reason}</p>
+             </div>
+           )}   
+
         </div>
     )}
 
